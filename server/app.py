@@ -1,18 +1,21 @@
 from fastapi import FastAPI
+import uvicorn
+
 from server.support_env import OpenSupportOpsEnv
 from models import SupportAction
 
+# Create FastAPI app
 app = FastAPI(
     title="OpenSupportOps API",
-    docs_url="/docs",     # ✅ ensures docs are available
-    redoc_url="/redoc"    # optional
+    docs_url="/docs",
+    redoc_url="/redoc"
 )
 
-# Initialize environment (default task)
+# Initialize environment
 env = OpenSupportOpsEnv("easy_refund.json")
 
 
-# Root endpoint (for health check)
+# Root endpoint (health check)
 @app.get("/")
 def root():
     return {"message": "OpenSupportOps API is running"}
@@ -28,7 +31,7 @@ def reset():
     }
 
 
-# Take a step in environment
+# Take a step
 @app.post("/step")
 def step(action: SupportAction):
     obs, reward, done, info = env.step(action)
@@ -40,7 +43,17 @@ def step(action: SupportAction):
     }
 
 
-# Get full state
+# Get state
 @app.get("/state")
 def state():
     return env.state()
+
+
+# ✅ REQUIRED for OpenEnv validation
+def main():
+    uvicorn.run("server.app:app", host="0.0.0.0", port=7860)
+
+
+# ✅ REQUIRED entry point
+if __name__ == "__main__":
+    main()
