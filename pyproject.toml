@@ -1,0 +1,14 @@
+[project]
+name = "opensupportops"
+version = "0.1.0"
+description = "OpenSupportOps - customer support simulation environment"
+requires-python = ">=3.10"
+
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "pydantic"
+]
+
+[tool.setuptools]
+packages = ["server"]
