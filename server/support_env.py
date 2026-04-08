@@ -63,6 +63,11 @@ class OpenSupportOpsEnv:
         if self._state is None:
             raise RuntimeError("Call reset() first")
 
+        if self._state.done:
+            obs = self._build_observation("episode_already_done")
+            reward = RewardModel(value=0.0, reason="episode_already_done")
+            return obs, reward, True, {"invalid_action": True}
+
         self._state.step_count += 1
         info: Dict[str, Any] = {"invalid_action": False}
 
@@ -100,8 +105,8 @@ class OpenSupportOpsEnv:
             else:
                 ticket = self._state.tickets[self._state.active_ticket_id]
                 ticket.category = action.value
-                if ticket.ticket_id in self.task_data["gold"]["classification"]:
-                    expected = self.task_data["gold"]["classification"][ticket.ticket_id]
+                expected = self.task_data.get("gold", {}).get("classification", {}).get(ticket.ticket_id)
+                if expected is not None:
                     if action.value == expected:
                         reward = RewardModel(value=0.1, reason="classification_correct")
                     else:
@@ -119,8 +124,8 @@ class OpenSupportOpsEnv:
             else:
                 ticket = self._state.tickets[self._state.active_ticket_id]
                 ticket.priority = action.value
-                if ticket.ticket_id in self.task_data["gold"]["priority"]:
-                    expected = self.task_data["gold"]["priority"][ticket.ticket_id]
+                expected = self.task_data.get("gold", {}).get("priority", {}).get(ticket.ticket_id)
+                if expected is not None:
                     if action.value == expected:
                         reward = RewardModel(value=0.1, reason="priority_correct")
                     else:
@@ -135,8 +140,8 @@ class OpenSupportOpsEnv:
             else:
                 ticket = self._state.tickets[self._state.active_ticket_id]
                 ticket.assigned_team = action.value
-                if ticket.ticket_id in self.task_data["gold"]["routing"]:
-                    expected = self.task_data["gold"]["routing"][ticket.ticket_id]
+                expected = self.task_data.get("gold", {}).get("routing", {}).get(ticket.ticket_id)
+                if expected is not None:
                     if action.value == expected:
                         reward = RewardModel(value=0.15, reason="routing_correct")
                     else:
@@ -177,8 +182,8 @@ class OpenSupportOpsEnv:
             else:
                 ticket_id = self._state.active_ticket_id
                 self._state.resolutions[ticket_id] = action.value or ""
-                if ticket_id in self.task_data["gold"]["resolution"]:
-                    expected = self.task_data["gold"]["resolution"][ticket_id]
+                expected = self.task_data.get("gold", {}).get("resolution", {}).get(ticket_id)
+                if expected is not None:
                     if action.value == expected:
                         reward = RewardModel(value=0.2, reason="resolution_correct")
                     else:
@@ -211,12 +216,47 @@ class OpenSupportOpsEnv:
 
         self._update_progress_score()
 
-        done = self._state.step_count >= self._state.max_steps
-        if done:
-            self._state.done = True
+        self._state.done = (
+            self._is_task_complete() or
+            self._state.step_count >= self._state.max_steps
+        )
 
         obs = self._build_observation(reward.reason)
-        return obs, reward, done, info
+        return obs, reward, self._state.done, info
+
+    def _is_task_complete(self) -> bool:
+        if self._state is None:
+            return False
+
+        gold = self.task_data.get("gold", {})
+
+        classification = gold.get("classification", {})
+        for tid, expected in classification.items():
+            if tid not in self._state.tickets:
+                return False
+            if self._state.tickets[tid].category != expected:
+                return False
+
+        priority = gold.get("priority", {})
+        for tid, expected in priority.items():
+            if tid not in self._state.tickets:
+                return False
+            if self._state.tickets[tid].priority != expected:
+                return False
+
+        routing = gold.get("routing", {})
+        for tid, expected in routing.items():
+            if tid not in self._state.tickets:
+                return False
+            if self._state.tickets[tid].assigned_team != expected:
+                return False
+
+        resolution = gold.get("resolution", {})
+        for tid, expected in resolution.items():
+            if self._state.resolutions.get(tid) != expected:
+                return False
+
+        return True
 
     def _update_progress_score(self) -> None:
         if self._state is None:
