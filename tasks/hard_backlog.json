@@ -1,0 +1,80 @@
+{
+  "task_id": "hard_backlog_001",
+  "difficulty": "hard",
+  "max_steps": 20,
+  "visible": {
+    "tickets": [
+      {
+        "ticket_id": "T3001",
+        "subject": "URGENT: Locked out before client demo",
+        "body": "I am an enterprise customer and I am locked out of my account. I have a client demo in 2 hours. Please help now.",
+        "customer_id": "C003",
+        "metadata": {
+          "customer_tier": "enterprise"
+        }
+      },
+      {
+        "ticket_id": "T3002",
+        "subject": "Delete all my data",
+        "body": "I want all my account data deleted immediately.",
+        "customer_id": "C004",
+        "metadata": {
+          "customer_tier": "pro"
+        }
+      },
+      {
+        "ticket_id": "T3003",
+        "subject": "Refund for old purchase",
+        "body": "I bought this plan 20 days ago and want a refund now.",
+        "customer_id": "C005",
+        "metadata": {
+          "customer_tier": "free"
+        }
+      }
+    ],
+    "customers": {
+      "C003": {
+        "name": "Anika",
+        "plan": "enterprise",
+        "country": "IN"
+      },
+      "C004": {
+        "name": "Rohit",
+        "plan": "pro",
+        "country": "IN"
+      },
+      "C005": {
+        "name": "Maya",
+        "plan": "free",
+        "country": "IN"
+      }
+    },
+    "policy_snippets": [
+      "Enterprise account lockout issues with urgent deadlines should be treated as urgent and routed to technical support immediately.",
+      "Data deletion requests must be routed to privacy compliance.",
+      "Refunds after 7 days are normally denied unless an explicit exception applies."
+    ]
+  },
+  "gold": {
+    "classification": {
+      "T3001": "account_access",
+      "T3002": "data_deletion",
+      "T3003": "billing_refund"
+    },
+    "priority": {
+      "T3001": "urgent",
+      "T3002": "high",
+      "T3003": "low"
+    },
+    "routing": {
+      "T3001": "technical_support",
+      "T3002": "privacy_compliance",
+      "T3003": "billing"
+    },
+    "resolution": {
+      "T3001": "escalate_access_issue",
+      "T3002": "process_data_deletion",
+      "T3003": "deny_refund"
+    }
+  }
+}

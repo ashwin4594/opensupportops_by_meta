@@ -1,0 +1,21 @@
+name: opensupportops
+description: Customer support operations simulation environment for AI agents
+version: 0.1.0
+
+entry_point: "server.support_env:OpenSupportOpsEnv"
+
+observation_type: "SupportObservation"
+action_type: "SupportAction"
+reward_type: "RewardModel"
+state_type: "SupportState"
+
+tasks:
+  - "easy_refund.json"
+  - "medium_double_charge.json"
+  - "hard_backlog.json"
+
+tags:
+  - "openenv"
+  - "customer-support"
+  - "operations"
+  - "agents"

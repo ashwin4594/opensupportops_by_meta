@@ -1,0 +1,44 @@
+{
+  "task_id": "easy_refund_001",
+  "difficulty": "easy",
+  "max_steps": 10,
+  "visible": {
+    "tickets": [
+      {
+        "ticket_id": "T1001",
+        "subject": "Refund request for duplicate purchase",
+        "body": "Hi, I bought the Pro plan twice by mistake yesterday. Please refund one charge. Thanks.",
+        "customer_id": "C001",
+        "metadata": {
+          "customer_tier": "pro"
+        }
+      }
+    ],
+    "customers": {
+      "C001": {
+        "name": "Riya",
+        "plan": "pro",
+        "country": "IN"
+      }
+    },
+    "policy_snippets": [
+      "Refunds are allowed within 7 days for accidental duplicate purchases.",
+      "Approved refunds should mention processing time of 3-5 business days.",
+      "Agents should thank the customer and confirm next steps."
+    ]
+  },
+  "gold": {
+    "classification": {
+      "T1001": "billing_refund"
+    },
+    "priority": {
+      "T1001": "medium"
+    },
+    "routing": {
+      "T1001": "billing"
+    },
+    "resolution": {
+      "T1001": "approve_refund"
+    }
+  }
+}

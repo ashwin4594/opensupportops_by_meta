@@ -1,0 +1,44 @@
+{
+  "task_id": "medium_double_charge_001",
+  "difficulty": "medium",
+  "max_steps": 12,
+  "visible": {
+    "tickets": [
+      {
+        "ticket_id": "T2001",
+        "subject": "I was charged twice",
+        "body": "Hi, I think I got charged twice for my subscription, but I do not have the invoice number right now.",
+        "customer_id": "C002",
+        "metadata": {
+          "customer_tier": "pro"
+        }
+      }
+    ],
+    "customers": {
+      "C002": {
+        "name": "Arjun",
+        "plan": "pro",
+        "country": "IN"
+      }
+    },
+    "policy_snippets": [
+      "If a user reports double charge without invoice or payment reference, ask for the missing billing proof first.",
+      "Do not approve refunds without sufficient billing evidence.",
+      "Billing review cases may be routed to billing after collecting required details."
+    ]
+  },
+  "gold": {
+    "classification": {
+      "T2001": "billing_double_charge"
+    },
+    "priority": {
+      "T2001": "medium"
+    },
+    "routing": {
+      "T2001": "billing"
+    },
+    "resolution": {
+      "T2001": "request_billing_proof"
+    }
+  }
+}
