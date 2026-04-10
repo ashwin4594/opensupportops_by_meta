@@ -333,8 +333,11 @@ def run_task(client: OpenAI, task_file: str) -> None:
             if done:
                 break
 
-        score = float(getattr(obs, "trajectory_score", 0.0))
-        success = score >= 1.0
+        raw_score = float(getattr(obs, "trajectory_score", 0.0))
+
+            # clamp score strictly inside (0,1)
+        score = min(max(raw_score, 0.01), 0.99)
+        success = raw_score >= 1.0
 
     except Exception as exc:
         log_step(
